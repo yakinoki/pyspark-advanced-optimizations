@@ -81,5 +81,33 @@ ranked.show(20)
 df_cached = df_repartitioned.cache()
 print("Cached DataFrame count:", df_cached.count())
 
+# Persist with different storage levels
+from pyspark import StorageLevel
+df_persist_memory = df_repartitioned.persist(StorageLevel.MEMORY_ONLY)
+df_persist_disk = df_repartitioned.persist(StorageLevel.DISK_ONLY)
+df_persist_both = df_repartitioned.persist(StorageLevel.MEMORY_AND_DISK)
+
+print("Persisted DataFrame (MEMORY_ONLY) count:", df_persist_memory.count())
+print("Persisted DataFrame (DISK_ONLY) count:", df_persist_disk.count())
+print("Persisted DataFrame (MEMORY_AND_DISK) count:", df_persist_both.count())
+
+# Checkpoint for fault tolerance (saves to disk)
+spark.sparkContext.setCheckpointDir("checkpoint_dir")
+df_checkpointed = df_repartitioned.checkpoint()
+print("Checkpointed DataFrame count:", df_checkpointed.count())
+
+# Unpersist to free memory
+df_cached.unpersist()
+df_persist_memory.unpersist()
+print("Unpersisted cached DataFrames")
+
+# Broadcast variables for efficient sharing
+broadcast_var = spark.sparkContext.broadcast({"key1": "value1", "key2": "value2"})
+print("Broadcast variable:", broadcast_var.value)
+
+# Memory management: coalesce after heavy operations
+df_final = df_repartitioned.groupBy("user_id").agg(F.sum("score")).coalesce(2)
+print("Final optimized DataFrame partitions:", df_final.rdd.getNumPartitions())
+
 # Cleanup
 spark.stop()
