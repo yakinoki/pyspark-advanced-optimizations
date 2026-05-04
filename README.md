@@ -69,4 +69,3 @@ result = large_df.join(F.broadcast(small_df), "key")
 
 - [Parquet形式ファイルの作成方法](https://qiita.com/naoya_ok/items/4fa2cdd5d968e977599b)
 - [Apache Sparkパフォーマンスチューニングガイド](https://spark.apache.org/docs/latest/sql-performance-tuning.html)
-- [Databricksパフォーマンスベストプラクティス](https://docs.databricks.com/sql/performance.html)
